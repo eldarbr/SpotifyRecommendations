@@ -321,6 +321,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.durationTargetLabel)
         self.durationTarget = QtWidgets.QTimeEdit(self.durationWidget)
         self.durationTarget.setMaximumSize(QtCore.QSize(55, 16777215))
+        self.durationTarget.setMaximumTime(QtCore.QTime(0, 59, 59))
         self.durationTarget.setObjectName("durationTarget")
         self.horizontalLayout_3.addWidget(self.durationTarget)
         spacerItem7 = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Minimum)
@@ -334,6 +335,7 @@ class Ui_MainWindow(object):
         self.durationMax = QtWidgets.QTimeEdit(self.durationWidget)
         self.durationMax.setMaximumSize(QtCore.QSize(55, 16777215))
         self.durationMax.setDateTime(QtCore.QDateTime(QtCore.QDate(2000, 1, 1), QtCore.QTime(0, 59, 59)))
+        self.durationMax.setMaximumTime(QtCore.QTime(0, 59, 59))
         self.durationMax.setObjectName("durationMax")
         self.horizontalLayout_3.addWidget(self.durationMax)
         self.recommendationsForm.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.durationWidget)
@@ -1002,6 +1004,7 @@ class Ui_MainWindow(object):
     def functionality(self):
         self.authorizeButton.clicked.connect(self.authorize)
         self.updatePlaylistsButton.clicked.connect(self.reload_playlists_list)
+        self.generateButton.clicked.connect(self.get_recommendations)
 
     def after_init(self):
         self.show_authorization_status()
@@ -1037,6 +1040,72 @@ class Ui_MainWindow(object):
             if len(self.user_id) == 0:
                 self.api.get_user_info()
                 self.get_user_id()
+
+    def get_recommendations(self):
+        playlists_index = self.playlistsListWidget.currentRow()
+        seeds = self.seedsPool.toPlainText().split("\n")
+        if playlists_index == -1 or len(seeds[0]) == 0 or len(seeds) > 5:
+            return
+        target_playlist_id = self.own_playlists[playlists_index]["id"]
+
+        acousticness = self.prepare_param_value(self.acousticnessMin, self.acousticnessTarget,
+                                                self.acousticnessMax, self.acousticnessEnabled)
+        danceability = self.prepare_param_value(self.danceabilityMin, self.danceabilityTarget,
+                                                self.danceabilityMax, self.danceabilityEnabled)
+
+        duration_ms_min_min = -self.durationMin.minimumTime().msecsTo(QtCore.QTime(0, 0, 0))
+        duration_ms_min = -self.durationMin.time().msecsTo(QtCore.QTime(0, 0, 0))
+        duration_ms_max_max = -self.durationMax.maximumTime().msecsTo(QtCore.QTime(0, 0, 0))
+        duration_ms_max = -self.durationMax.time().msecsTo(QtCore.QTime(0, 0, 0))
+
+        duration_ms = ([duration_ms_min, None][int(duration_ms_min == duration_ms_min_min)],
+                       [-self.durationTarget.time().msecsTo(QtCore.QTime(0, 0, 0)), None][int(not self.durationEnabled.isChecked())],
+                       [duration_ms_max, None][int(duration_ms_max == duration_ms_max_max)]
+        )
+        duration_ms = [duration_ms, None][int(duration_ms == (None, None, None))]
+
+        energy = self.prepare_param_value(self.energyMin, self.energyTarget, self.energyMax, self.energyEnabled)
+        instrumentalness = self.prepare_param_value(self.instrumentalnessMin, self.instrumentalnessTarget,
+                                                    self.instrumentalnessMax, self.instrumentalnessEnabled)
+        key = self.prepare_param_value(self.keyMin, self.keyTarget, self.keyMax, self.keyEnabled)
+        liveness = self.prepare_param_value(self.livenessMin, self.livenessTarget,
+                                            self.livenessMax, self.livenessEnabled)
+        loudness = self.prepare_param_value(self.loudnessMin, self.loudnessTarget,
+                                            self.loudnessMax, self.loudnessEnabled)
+        mode = self.prepare_param_value(self.modeMin, self.modeTarget, self.modeMax, self.modeEnabled)
+        popularity = self.prepare_param_value(self.popularityMin, self.popularityTarget,
+                                              self.popularityMax, self.popularityEnabled)
+        speechiness = self.prepare_param_value(self.speechinessMin, self.speechinessTarget,
+                                               self.speechinessMax, self.speechinessEnabled)
+        tempo = self.prepare_param_value(self.tempoMin, self.tempoTarget, self.tempoMax, self.tempoEnabled)
+        time_signature = self.prepare_param_value(self.timeSignatureMin, self.timeSignatureTarget,
+                                                  self.timeSignatureMax, self.timeSignatureEnabled)
+        valence = self.prepare_param_value(self.valenceMin, self.valenceTarget, self.valenceMax, self.valenceEnabled)
+
+        recommendations = self.api.get_recommendations(seeds, limit=self.recommendationsLimitSpinBox.value(),
+                                                       acousticness=acousticness, danceability=danceability,
+                                                       duration_ms=duration_ms, energy=energy,
+                                                       instrumentalness=instrumentalness, key=key, liveness=liveness,
+                                                       loudness=loudness, mode=mode, popularity=popularity,
+                                                       speechiness=speechiness, tempo=tempo,
+                                                       time_signature=time_signature, valence=valence)
+        recommended_track_uris = list()
+        for track in recommendations["tracks"]:
+            recommended_track_uris += [track["uri"]]
+
+        if self.appendRadioButton.isChecked():
+            self.api.append_tracks_to_playlist(target_playlist_id, recommended_track_uris)
+        else:
+            self.api.overwrite_tracks_in_playlist(target_playlist_id, recommended_track_uris)
+
+    def prepare_param_value(self, paramMin, paramTarget, paramMax, paramEnabled):
+        param = (
+            [paramMin.value(), None][int(paramMin.value() == paramMin.minimum())],
+            [paramTarget.value(), None][int(not paramEnabled.isChecked())],
+            [paramMax.value(), None][int(paramMax.value() == paramMax.maximum())]
+        )
+        param = [param, None][int(param == (None, None, None))]
+        return param
 
 
 if __name__ == "__main__":

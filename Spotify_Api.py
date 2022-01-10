@@ -42,7 +42,6 @@ class SpotifyApi:
         return self.valid_token
 
     def get_token(self):
-        self.read_data()
         if len(self.refresh_token) + len(self.auth_code) == 0:
             print("No saved refresh token or authorization code")
             self.valid_token = False
@@ -152,12 +151,13 @@ class SpotifyApi:
             sp_link = re.search(r"http[s]*://open.spotify.com/(track|artist|genre)/[\dA-Za-z]+", seed)
             if sp_link is None:
                 print(f"[SpotifyApi get_recommendations] Spotify link not found at {seed}")
-            if "artist" in sp_link[0]:
-                seed_artists += [sp_link[0].split("/")[-1]]
-            elif "track" in sp_link[0]:
-                seed_tracks += [sp_link[0].split("/")[-1]]
             else:
-                seed_genres += [sp_link[0].split("/")[-1]]
+                if "artist" in sp_link[0]:
+                    seed_artists += [sp_link[0].split("/")[-1]]
+                elif "track" in sp_link[0]:
+                    seed_tracks += [sp_link[0].split("/")[-1]]
+                else:
+                    seed_genres += [sp_link[0].split("/")[-1]]
 
         url = "https://api.spotify.com/v1/recommendations"
         params = {
@@ -269,15 +269,76 @@ class SpotifyApi:
 
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, params=params, headers=headers)
-        print(response.request.url)
         if response.status_code == 200:
             return response.json()
         print("[SpotifyApi get_recommendations] Error:", response.json())
         return None
 
+    def get_playlist_items(self, playlist_id: str):
+        if not self.prepare_token():
+            return None
+
+        url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
+        headers = {"Authorization": "Bearer " + self.token}
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print("[SpotifyApi get_playlist_items] Error:", response.json())
+            return None
+
+    def flush_playlist(self, playlist_id: str):
+        if not self.prepare_token():
+            return None
+        playlist_items = self.get_playlist_items(playlist_id)
+        if playlist_items is None:
+            print("[SpotifyApi flush_playlist] Error getting playlist items")
+            return None
+        else:
+            url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+            headers = {"Authorization": "Bearer " + self.token}
+            data = {"tracks": []}
+            errors = []
+            for i in range(len(playlist_items["tracks"]["items"])):
+                data["tracks"] += [{"uri": playlist_items["tracks"]["items"][i]["track"]["uri"]}]
+                if (i+1) % 100 == 0:
+                    response = requests.delete(url, headers=headers, json=data)
+                    if response.status_code != 200:
+                        errors += [response.text]
+                    data["tracks"] = []
+            response = requests.delete(url, headers=headers, json=data)
+            if response.status_code != 200:
+                errors += [response.text]
+            if len(errors) != 0:
+                print("[SpotifyApi flush_playlist] Error flushing:")
+                print("\n".join(errors))
+                return None
+            else:
+                return 0
+
+    def append_tracks_to_playlist(self, playlist_id: str, track_uris: list):
+        if not self.prepare_token():
+            return None
+
+        url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+        headers = {"Authorization": "Bearer " + self.token}
+        data = {"uris": track_uris}
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(response.status_code)
+            print("[SpotifyApi append_tracks_to_playlist] Error: " + response.text)
+            return None
+
+    def overwrite_tracks_in_playlist(self, playlist_id: str, track_uris: list):
+        if not self.prepare_token():
+            return None
+        self.flush_playlist(playlist_id)
+        return self.append_tracks_to_playlist(playlist_id, track_uris)
+
 
 if __name__ == "__main__":
     config = Configurator()
     api = SpotifyApi()
-    print(api.get_recommendations(["https://open.spotify.com/track/1JIzFhI9Lt5FyslawmHCBi?si=e38e5c6220934c0d"],
-                                  tempo=(None, 50, 70)))
+    api.get_recommendations(["1"])

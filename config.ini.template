@@ -1,0 +1,15 @@
+[general] # must be filled by user!
+client_id =
+client_secret =
+redirect_uri =
+
+[protected] # must be left unfilled!
+auth_code = 
+token =
+token_expiration =
+refresh_token =
+
+[user_info] # must be left unfilled!
+user_id =
+country =
+

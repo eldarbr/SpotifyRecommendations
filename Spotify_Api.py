@@ -269,6 +269,7 @@ class SpotifyApi:
 
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, params=params, headers=headers)
+        print(response.request.url)
         if response.status_code == 200:
             return response.json()
         print("[SpotifyApi get_recommendations] Error:", response.json())
@@ -299,22 +300,21 @@ class SpotifyApi:
             headers = {"Authorization": "Bearer " + self.token}
             data = {"tracks": []}
             errors = []
-            for i in range(len(playlist_items["tracks"]["items"])):
-                data["tracks"] += [{"uri": playlist_items["tracks"]["items"][i]["track"]["uri"]}]
-                if (i+1) % 100 == 0:
-                    response = requests.delete(url, headers=headers, json=data)
-                    if response.status_code != 200:
-                        errors += [response.text]
-                    data["tracks"] = []
+            if playlist_items["tracks"]["limit"] == 100:
+                for track in playlist_items["tracks"]["items"]:
+                    data["tracks"] += [{"uri": track["track"]["uri"]}]
             response = requests.delete(url, headers=headers, json=data)
             if response.status_code != 200:
                 errors += [response.text]
-            if len(errors) != 0:
-                print("[SpotifyApi flush_playlist] Error flushing:")
-                print("\n".join(errors))
+            response = requests.delete(url, headers=headers, json=data)
+            if playlist_items["tracks"]["total"] > len(playlist_items["tracks"]["items"]):
+                recursive = self.flush_playlist(playlist_id)
+                if recursive != 0:
+                    return recursive
+            if response.status_code != 200:
+                print("[SpotifyApi flush_playlist] Error flushing:", response.text)
                 return None
-            else:
-                return 0
+            return 0
 
     def append_tracks_to_playlist(self, playlist_id: str, track_uris: list):
         if not self.prepare_token():
@@ -324,10 +324,9 @@ class SpotifyApi:
         headers = {"Authorization": "Bearer " + self.token}
         data = {"uris": track_uris}
         response = requests.post(url, headers=headers, json=data)
-        if response.status_code == 200:
+        if response.status_code == 200 or response.status_code == 201:
             return response.json()
         else:
-            print(response.status_code)
             print("[SpotifyApi append_tracks_to_playlist] Error: " + response.text)
             return None
 
@@ -341,4 +340,3 @@ class SpotifyApi:
 if __name__ == "__main__":
     config = Configurator()
     api = SpotifyApi()
-    api.get_recommendations(["1"])

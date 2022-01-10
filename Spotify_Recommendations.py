@@ -141,7 +141,7 @@ class Ui_MainWindow(object):
         self.recommendationsLimitSpinBox.setFont(font)
         self.recommendationsLimitSpinBox.setMinimum(1)
         self.recommendationsLimitSpinBox.setMaximum(100)
-        self.recommendationsLimitSpinBox.setProperty("value", 20)
+        self.recommendationsLimitSpinBox.setProperty("value", 100)
         self.recommendationsLimitSpinBox.setObjectName("recommendationsLimitSpinBox")
         self.horizontalLayout_20.addWidget(self.recommendationsLimitSpinBox)
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)

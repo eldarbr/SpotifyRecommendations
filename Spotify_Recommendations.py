@@ -6,6 +6,8 @@ from Configurator import Configurator
 from OAuth_Master import SpotifyOAuth
 from Spotify_Api import SpotifyApi
 from typing import Union
+import re
+import json
 
 
 class Ui_MainWindow(object):
@@ -949,6 +951,9 @@ class Ui_MainWindow(object):
         self.horizontalLayout_15.addWidget(self.analysisButton)
         self.verticalLayout_5.addWidget(self.analysisButtonWidget)
         self.analysisResultTextBrowser = QtWidgets.QTextBrowser(self.analysisTab)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.analysisResultTextBrowser.setFont(font)
         self.analysisResultTextBrowser.setObjectName("analysisResultTextBrowser")
         self.verticalLayout_5.addWidget(self.analysisResultTextBrowser)
         self.tabWidget.addTab(self.analysisTab, "")
@@ -1045,6 +1050,7 @@ class Ui_MainWindow(object):
         self.authorizeButton.clicked.connect(self.authorize)
         self.updatePlaylistsButton.clicked.connect(self.reload_playlists_list)
         self.generateButton.clicked.connect(self.get_recommendations)
+        self.analysisButton.clicked.connect(self.track_analysis)
 
     def after_init(self):
         self.sliderss_init()
@@ -1350,6 +1356,16 @@ class Ui_MainWindow(object):
         )
         param = [param, None][int(param == (None, None, None))]
         return param
+
+    def track_analysis(self):
+        url = self.analysisUrlEdit.text()
+        q = re.search(r"http[s]*://open.spotify.com/track/([\dA-Za-z]+)", url)
+        if q is None:
+            return
+        track_id = q[1]
+        audio_features = self.api.get_track_audio_features(track_id)
+        s = json.dumps(audio_features, indent='       ')
+        self.analysisResultTextBrowser.setText(s)
 
 
 if __name__ == "__main__":

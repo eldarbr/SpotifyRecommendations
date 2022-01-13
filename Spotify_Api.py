@@ -346,6 +346,17 @@ class SpotifyApi:
         self.flush_playlist(playlist_id)
         return self.append_tracks_to_playlist(playlist_id, track_uris)
 
+    def get_track_audio_features(self, track_id):
+        if not self.prepare_token():
+            return None
+        url = f"https://api.spotify.com/v1/audio-features/{track_id}"
+        headers = {"Authorization": "Bearer " + self.token}
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print("[SpotifyApi get_track_audio features] Error:", response.text)
+
 
 if __name__ == "__main__":
     config = Configurator()

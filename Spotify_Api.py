@@ -275,13 +275,14 @@ class SpotifyApi:
         print("[SpotifyApi get_recommendations] Error:", response.json())
         return None
 
-    def get_playlist_items(self, playlist_id: str):
+    def get_playlist_items(self, playlist_id: str, offset=0):
         if not self.prepare_token():
             return None
 
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
         headers = {"Authorization": "Bearer " + self.token}
-        response = requests.get(url, headers=headers)
+        params = {"offset": offset}
+        response = requests.get(url, headers=headers, params=params)
         if response.status_code == 200:
             return response.json()
         else:
@@ -316,10 +317,19 @@ class SpotifyApi:
                 return None
             return 0
 
-    def append_tracks_to_playlist(self, playlist_id: str, track_uris: list):
+    def append_tracks_to_playlist(self, playlist_id: str, track_uris: list, add_duplicates=False):
         if not self.prepare_token():
             return None
 
+        if not add_duplicates:
+            offset = 0
+            content = self.get_playlist_items(playlist_id)
+            while offset+content["tracks"]["total"] > content["tracks"]["limit"]:
+                offset += content["tracks"]["total"]
+                content["tracks"] += self.get_playlist_items(playlist_id, offset)
+            for content_item in content["tracks"]["items"]:
+                if content_item["track"]["uri"] in track_uris:
+                    track_uris.remove(content_item["track"]["uri"])
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
         headers = {"Authorization": "Bearer " + self.token}
         data = {"uris": track_uris}
@@ -340,3 +350,4 @@ class SpotifyApi:
 if __name__ == "__main__":
     config = Configurator()
     api = SpotifyApi()
+    print(api.get_playlist_items("6hiGB76fT5SQlztmAeV5pY"))

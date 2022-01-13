@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from Configurator import Configurator
 from OAuth_Master import SpotifyOAuth
 from Spotify_Api import SpotifyApi
+from typing import Union
 
 
 class Ui_MainWindow(object):
@@ -15,7 +16,7 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(584, 605)
+        MainWindow.resize(650, 605)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -195,6 +196,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setSpacing(15)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.acousticnessMinLabel = QtWidgets.QLabel(self.acousticnessWidget)
+        self.acousticnessMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.acousticnessMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -210,6 +212,7 @@ class Ui_MainWindow(object):
         self.acousticnessEnabled.setObjectName("acousticnessEnabled")
         self.horizontalLayout.addWidget(self.acousticnessEnabled)
         self.acousticnessTargetLabel = QtWidgets.QLabel(self.acousticnessWidget)
+        self.acousticnessTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.acousticnessTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                   QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                   QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -221,6 +224,7 @@ class Ui_MainWindow(object):
         self.acousticnessTarget.setObjectName("acousticnessTarget")
         self.horizontalLayout.addWidget(self.acousticnessTarget)
         self.acousticnessMaxLabel = QtWidgets.QLabel(self.acousticnessWidget)
+        self.acousticnessMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.acousticnessMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -242,6 +246,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setSpacing(15)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.danceabilityMinLabel = QtWidgets.QLabel(self.danceabilityWidget)
+        self.danceabilityMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.danceabilityMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -257,6 +262,7 @@ class Ui_MainWindow(object):
         self.danceabilityEnabled.setObjectName("danceabilityEnabled")
         self.horizontalLayout_2.addWidget(self.danceabilityEnabled)
         self.danceabilityTargetLabel = QtWidgets.QLabel(self.danceabilityWidget)
+        self.danceabilityTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.danceabilityTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                   QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                   QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -268,6 +274,7 @@ class Ui_MainWindow(object):
         self.danceabilityTarget.setObjectName("danceabilityTarget")
         self.horizontalLayout_2.addWidget(self.danceabilityTarget)
         self.danceabilityMaxLabel = QtWidgets.QLabel(self.danceabilityWidget)
+        self.danceabilityMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.danceabilityMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -348,6 +355,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setSpacing(15)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.energyMinLabel = QtWidgets.QLabel(self.energyWidget)
+        self.energyMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.energyMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                          QtCore.Qt.AlignmentFlag.AlignTrailing |
                                          QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -363,6 +371,7 @@ class Ui_MainWindow(object):
         self.energyEnabled.setObjectName("energyEnabled")
         self.horizontalLayout_4.addWidget(self.energyEnabled)
         self.energyTargetLabel = QtWidgets.QLabel(self.energyWidget)
+        self.energyTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.energyTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                             QtCore.Qt.AlignmentFlag.AlignTrailing |
                                             QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -374,6 +383,7 @@ class Ui_MainWindow(object):
         self.energyTarget.setObjectName("energyTarget")
         self.horizontalLayout_4.addWidget(self.energyTarget)
         self.energyMaxLabel = QtWidgets.QLabel(self.energyWidget)
+        self.energyMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.energyMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                          QtCore.Qt.AlignmentFlag.AlignTrailing |
                                          QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -395,6 +405,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.setSpacing(15)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.instrumentalnessMinLabel = QtWidgets.QLabel(self.instrumentalnessWidget)
+        self.instrumentalnessMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.instrumentalnessMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                    QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                    QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -410,6 +421,7 @@ class Ui_MainWindow(object):
         self.instrumentalnessEnabled.setObjectName("instrumentalnessEnabled")
         self.horizontalLayout_5.addWidget(self.instrumentalnessEnabled)
         self.instrumentalnessTargetLabel = QtWidgets.QLabel(self.instrumentalnessWidget)
+        self.instrumentalnessTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.instrumentalnessTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                       QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                       QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -421,6 +433,7 @@ class Ui_MainWindow(object):
         self.instrumentalnessTarget.setObjectName("instrumentalnessTarget")
         self.horizontalLayout_5.addWidget(self.instrumentalnessTarget)
         self.instrumentalnessMaxLabel = QtWidgets.QLabel(self.instrumentalnessWidget)
+        self.instrumentalnessMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.instrumentalnessMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                    QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                    QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -442,6 +455,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setSpacing(15)
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         self.keyMinLabel = QtWidgets.QLabel(self.keyWidget)
+        self.keyMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.keyMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                       QtCore.Qt.AlignmentFlag.AlignTrailing |
                                       QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -459,6 +473,7 @@ class Ui_MainWindow(object):
         self.keyEnabled.setObjectName("keyEnabled")
         self.horizontalLayout_6.addWidget(self.keyEnabled)
         self.keyTargetLabel = QtWidgets.QLabel(self.keyWidget)
+        self.keyTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.keyTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                          QtCore.Qt.AlignmentFlag.AlignTrailing |
                                          QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -472,6 +487,7 @@ class Ui_MainWindow(object):
         self.keyTarget.setObjectName("keyTarget")
         self.horizontalLayout_6.addWidget(self.keyTarget)
         self.keyMaxLabel = QtWidgets.QLabel(self.keyWidget)
+        self.keyMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.keyMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                       QtCore.Qt.AlignmentFlag.AlignTrailing |
                                       QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -494,6 +510,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.setSpacing(15)
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.livenessMinLabel = QtWidgets.QLabel(self.livenessWidget)
+        self.livenessMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.livenessMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                            QtCore.Qt.AlignmentFlag.AlignTrailing |
                                            QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -509,6 +526,7 @@ class Ui_MainWindow(object):
         self.livenessEnabled.setObjectName("livenessEnabled")
         self.horizontalLayout_8.addWidget(self.livenessEnabled)
         self.livenessTargetLabel = QtWidgets.QLabel(self.livenessWidget)
+        self.livenessTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.livenessTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                               QtCore.Qt.AlignmentFlag.AlignTrailing |
                                               QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -520,6 +538,7 @@ class Ui_MainWindow(object):
         self.livenessTarget.setObjectName("livenessTarget")
         self.horizontalLayout_8.addWidget(self.livenessTarget)
         self.livenessMaxLabel = QtWidgets.QLabel(self.livenessWidget)
+        self.livenessMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.livenessMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                            QtCore.Qt.AlignmentFlag.AlignTrailing |
                                            QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -541,6 +560,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_9.setSpacing(15)
         self.horizontalLayout_9.setObjectName("horizontalLayout_9")
         self.loudnessMinLabel = QtWidgets.QLabel(self.loudnessWidget)
+        self.loudnessMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.loudnessMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                            QtCore.Qt.AlignmentFlag.AlignTrailing |
                                            QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -558,6 +578,7 @@ class Ui_MainWindow(object):
         self.loudnessEnabled.setObjectName("loudnessEnabled")
         self.horizontalLayout_9.addWidget(self.loudnessEnabled)
         self.loudnessTargetLabel = QtWidgets.QLabel(self.loudnessWidget)
+        self.loudnessTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.loudnessTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                               QtCore.Qt.AlignmentFlag.AlignTrailing |
                                               QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -571,6 +592,7 @@ class Ui_MainWindow(object):
         self.loudnessTarget.setObjectName("loudnessTarget")
         self.horizontalLayout_9.addWidget(self.loudnessTarget)
         self.loudnessMaxLabel = QtWidgets.QLabel(self.loudnessWidget)
+        self.loudnessMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.loudnessMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                            QtCore.Qt.AlignmentFlag.AlignTrailing |
                                            QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -592,6 +614,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.setSpacing(15)
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         self.modeMinLabel = QtWidgets.QLabel(self.modeWidget)
+        self.modeMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.modeMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                        QtCore.Qt.AlignmentFlag.AlignTrailing |
                                        QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -607,6 +630,7 @@ class Ui_MainWindow(object):
         self.modeEnabled.setObjectName("modeEnabled")
         self.horizontalLayout_10.addWidget(self.modeEnabled)
         self.modeTargetLabel = QtWidgets.QLabel(self.modeWidget)
+        self.modeTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.modeTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                           QtCore.Qt.AlignmentFlag.AlignTrailing |
                                           QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -618,6 +642,7 @@ class Ui_MainWindow(object):
         self.modeTarget.setObjectName("modeTarget")
         self.horizontalLayout_10.addWidget(self.modeTarget)
         self.modeMaxLabel = QtWidgets.QLabel(self.modeWidget)
+        self.modeMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.modeMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                        QtCore.Qt.AlignmentFlag.AlignTrailing |
                                        QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -639,6 +664,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.setSpacing(15)
         self.horizontalLayout_11.setObjectName("horizontalLayout_11")
         self.popularityMinLabel = QtWidgets.QLabel(self.popularityWidget)
+        self.popularityMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.popularityMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                              QtCore.Qt.AlignmentFlag.AlignTrailing |
                                              QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -654,6 +680,7 @@ class Ui_MainWindow(object):
         self.popularityEnabled.setObjectName("popularityEnabled")
         self.horizontalLayout_11.addWidget(self.popularityEnabled)
         self.popularityTargetLabel = QtWidgets.QLabel(self.popularityWidget)
+        self.popularityTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.popularityTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                 QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                 QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -665,6 +692,7 @@ class Ui_MainWindow(object):
         self.popularityTarget.setObjectName("popularityTarget")
         self.horizontalLayout_11.addWidget(self.popularityTarget)
         self.popularityMaxLabel = QtWidgets.QLabel(self.popularityWidget)
+        self.popularityMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.popularityMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                              QtCore.Qt.AlignmentFlag.AlignTrailing |
                                              QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -686,6 +714,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_13.setSpacing(15)
         self.horizontalLayout_13.setObjectName("horizontalLayout_13")
         self.speechinessMinLabel = QtWidgets.QLabel(self.speechinessWidget)
+        self.speechinessMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.speechinessMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                               QtCore.Qt.AlignmentFlag.AlignTrailing |
                                               QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -702,6 +731,7 @@ class Ui_MainWindow(object):
         self.speechinessEnabled.setObjectName("speechinessEnabled")
         self.horizontalLayout_13.addWidget(self.speechinessEnabled)
         self.speechinessTargetLabel = QtWidgets.QLabel(self.speechinessWidget)
+        self.speechinessTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.speechinessTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                  QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                  QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -713,6 +743,7 @@ class Ui_MainWindow(object):
         self.speechinessTarget.setObjectName("speechinessTarget")
         self.horizontalLayout_13.addWidget(self.speechinessTarget)
         self.speechinessMaxLabel = QtWidgets.QLabel(self.speechinessWidget)
+        self.speechinessMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.speechinessMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                               QtCore.Qt.AlignmentFlag.AlignTrailing |
                                               QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -734,6 +765,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_14.setSpacing(15)
         self.horizontalLayout_14.setObjectName("horizontalLayout_14")
         self.tempoMinLabel = QtWidgets.QLabel(self.tempoWidget)
+        self.tempoMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.tempoMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                         QtCore.Qt.AlignmentFlag.AlignTrailing |
                                         QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -749,6 +781,7 @@ class Ui_MainWindow(object):
         self.tempoEnabled.setObjectName("tempoEnabled")
         self.horizontalLayout_14.addWidget(self.tempoEnabled)
         self.tempoTargetLabel = QtWidgets.QLabel(self.tempoWidget)
+        self.tempoTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.tempoTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                            QtCore.Qt.AlignmentFlag.AlignTrailing |
                                            QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -760,6 +793,7 @@ class Ui_MainWindow(object):
         self.tempoTarget.setObjectName("tempoTarget")
         self.horizontalLayout_14.addWidget(self.tempoTarget)
         self.tempoMaxLabel = QtWidgets.QLabel(self.tempoWidget)
+        self.tempoMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.tempoMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                         QtCore.Qt.AlignmentFlag.AlignTrailing |
                                         QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -785,6 +819,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_7.setSpacing(15)
         self.horizontalLayout_7.setObjectName("horizontalLayout_7")
         self.valenceMinLabel = QtWidgets.QLabel(self.valenceWidget)
+        self.valenceMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.valenceMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                           QtCore.Qt.AlignmentFlag.AlignTrailing |
                                           QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -800,6 +835,7 @@ class Ui_MainWindow(object):
         self.valenceEnabled.setObjectName("valenceEnabled")
         self.horizontalLayout_7.addWidget(self.valenceEnabled)
         self.valenceTargetLabel = QtWidgets.QLabel(self.valenceWidget)
+        self.valenceTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.valenceTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                              QtCore.Qt.AlignmentFlag.AlignTrailing |
                                              QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -811,6 +847,7 @@ class Ui_MainWindow(object):
         self.valenceTarget.setObjectName("valenceTarget")
         self.horizontalLayout_7.addWidget(self.valenceTarget)
         self.valenceMaxLabel = QtWidgets.QLabel(self.valenceWidget)
+        self.valenceMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.valenceMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                           QtCore.Qt.AlignmentFlag.AlignTrailing |
                                           QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -829,6 +866,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_12.setSpacing(15)
         self.horizontalLayout_12.setObjectName("horizontalLayout_12")
         self.timeSignatureMinLabel = QtWidgets.QLabel(self.timeSignatureWidget)
+        self.timeSignatureMinLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.timeSignatureMinLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                 QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                 QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -845,6 +883,7 @@ class Ui_MainWindow(object):
         self.timeSignatureEnabled.setObjectName("timeSignatureEnabled")
         self.horizontalLayout_12.addWidget(self.timeSignatureEnabled)
         self.timeSignatureTargetLabel = QtWidgets.QLabel(self.timeSignatureWidget)
+        self.timeSignatureTargetLabel.setMinimumSize(QtCore.QSize(55, 0))
         self.timeSignatureTargetLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                    QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                    QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -857,6 +896,7 @@ class Ui_MainWindow(object):
         self.timeSignatureTarget.setObjectName("timeSignatureTarget")
         self.horizontalLayout_12.addWidget(self.timeSignatureTarget)
         self.timeSignatureMaxLabel = QtWidgets.QLabel(self.timeSignatureWidget)
+        self.timeSignatureMaxLabel.setMinimumSize(QtCore.QSize(45, 0))
         self.timeSignatureMaxLabel.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight |
                                                 QtCore.Qt.AlignmentFlag.AlignTrailing |
                                                 QtCore.Qt.AlignmentFlag.AlignVCenter)
@@ -1007,8 +1047,209 @@ class Ui_MainWindow(object):
         self.generateButton.clicked.connect(self.get_recommendations)
 
     def after_init(self):
+        self.sliderss_init()
         self.show_authorization_status()
         self.appendRadioButton.setChecked(True)
+
+    def sliderss_triggers(self):
+        self.acousticnessMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.acousticnessMax.value(), self.acousticnessMaxLabel,
+                                                 [self.acousticnessTarget, self.acousticnessMin]))
+        self.acousticnessTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.acousticnessTarget.value(), self.acousticnessTargetLabel,
+                                                    self.acousticnessMin, self.acousticnessMax))
+        self.acousticnessMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.acousticnessMin.value(), self.acousticnessMinLabel,
+                                                 [self.acousticnessTarget, self.acousticnessMax]))
+        self.danceabilityMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.danceabilityMax.value(), self.danceabilityMaxLabel,
+                                                 [self.danceabilityTarget, self.danceabilityMin]))
+        self.danceabilityTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.danceabilityTarget.value(), self.danceabilityTargetLabel,
+                                                    self.danceabilityMin, self.danceabilityMax))
+        self.danceabilityMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.danceabilityMin.value(), self.danceabilityMinLabel,
+                                                 [self.danceabilityTarget, self.danceabilityMax]))
+        self.energyMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.energyMax.value(), self.energyMaxLabel,
+                                                 [self.energyTarget, self.energyMin]))
+        self.energyTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.energyTarget.value(), self.energyTargetLabel,
+                                                    self.energyMin, self.energyMax))
+        self.energyMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.energyMin.value(), self.energyMinLabel,
+                                                 [self.energyTarget, self.energyMax]))
+        self.instrumentalnessMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.instrumentalnessMax.value(), self.instrumentalnessMaxLabel,
+                                                 [self.instrumentalnessTarget, self.instrumentalnessMin]))
+        self.instrumentalnessTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.instrumentalnessTarget.value(),
+                                                    self.instrumentalnessTargetLabel,
+                                                    self.instrumentalnessMin, self.instrumentalnessMax))
+        self.instrumentalnessMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.instrumentalnessMin.value(), self.instrumentalnessMinLabel,
+                                                 [self.instrumentalnessTarget, self.instrumentalnessMax]))
+        self.keyMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.keyMax.value(), self.keyMaxLabel,
+                                                 [self.keyTarget, self.keyMin]))
+        self.keyTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.keyTarget.value(), self.keyTargetLabel,
+                                                    self.keyMin, self.keyMax))
+        self.keyMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.keyMin.value(), self.keyMinLabel,
+                                                 [self.keyTarget, self.keyMax]))
+        self.livenessMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.livenessMax.value(), self.livenessMaxLabel,
+                                                 [self.livenessTarget, self.livenessMin]))
+        self.livenessTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.livenessTarget.value(), self.livenessTargetLabel,
+                                                    self.livenessMin, self.livenessMax))
+        self.livenessMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.livenessMin.value(), self.livenessMinLabel,
+                                                 [self.livenessTarget, self.livenessMax]))
+        self.loudnessMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.loudnessMax.value(), self.loudnessMaxLabel,
+                                                 [self.loudnessTarget, self.loudnessMin]))
+        self.loudnessTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.loudnessTarget.value(), self.loudnessTargetLabel,
+                                                    self.loudnessMin, self.loudnessMax))
+        self.loudnessMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.loudnessMin.value(), self.loudnessMinLabel,
+                                                 [self.loudnessTarget, self.loudnessMax]))
+        self.modeMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.modeMax.value(), self.modeMaxLabel,
+                                                 [self.modeTarget, self.modeMin]))
+        self.modeTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.modeTarget.value(), self.modeTargetLabel,
+                                                    self.modeMin, self.modeMax))
+        self.modeMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.modeMin.value(), self.modeMinLabel,
+                                                 [self.modeTarget, self.modeMax]))
+        self.popularityMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.popularityMax.value(), self.popularityMaxLabel,
+                                                 [self.popularityTarget, self.popularityMin]))
+        self.popularityTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.popularityTarget.value(), self.popularityTargetLabel,
+                                                    self.popularityMin, self.popularityMax))
+        self.popularityMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.popularityMin.value(), self.popularityMinLabel,
+                                                 [self.popularityTarget, self.popularityMax]))
+        self.speechinessMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.speechinessMax.value(), self.speechinessMaxLabel,
+                                                 [self.speechinessTarget, self.speechinessMin]))
+        self.speechinessTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.speechinessTarget.value(), self.speechinessTargetLabel,
+                                                    self.speechinessMin, self.speechinessMax))
+        self.speechinessMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.speechinessMin.value(), self.speechinessMinLabel,
+                                                 [self.speechinessTarget, self.speechinessMax]))
+        self.tempoMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.tempoMax.value(), self.tempoMaxLabel,
+                                                 [self.tempoTarget, self.tempoMin]))
+        self.tempoTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.tempoTarget.value(), self.tempoTargetLabel,
+                                                    self.tempoMin, self.tempoMax))
+        self.tempoMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.tempoMin.value(), self.tempoMinLabel,
+                                                 [self.tempoTarget, self.tempoMax]))
+        self.timeSignatureMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.timeSignatureMax.value(), self.timeSignatureMaxLabel,
+                                                 [self.timeSignatureTarget, self.timeSignatureMin]))
+        self.timeSignatureTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.timeSignatureTarget.value(), self.timeSignatureTargetLabel,
+                                                    self.timeSignatureMin, self.timeSignatureMax))
+        self.timeSignatureMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.timeSignatureMin.value(), self.timeSignatureMinLabel,
+                                                 [self.timeSignatureTarget, self.timeSignatureMax]))
+        self.valenceMax.valueChanged.connect(
+            lambda: self.changed_max_param_value(self.valenceMax.value(), self.valenceMaxLabel,
+                                                 [self.valenceTarget, self.valenceMin]))
+        self.valenceTarget.valueChanged.connect(
+            lambda: self.changed_target_param_value(self.valenceTarget.value(), self.valenceTargetLabel,
+                                                    self.valenceMin, self.valenceMax))
+        self.valenceMin.valueChanged.connect(
+            lambda: self.changed_min_param_value(self.valenceMin.value(), self.valenceMinLabel,
+                                                 [self.valenceTarget, self.valenceMax]))
+
+    def sliderss_init(self):
+        self.changed_max_param_value(self.acousticnessMax.maximum(), self.acousticnessMaxLabel, None)
+        self.changed_target_param_value(self.acousticnessTarget.value(), self.acousticnessTargetLabel,
+                                        self.acousticnessMin, self.acousticnessMax)
+        self.changed_min_param_value(self.acousticnessMin.minimum(), self.acousticnessMinLabel, None)
+        self.changed_max_param_value(self.danceabilityMax.maximum(), self.danceabilityMaxLabel, None)
+        self.changed_target_param_value(self.danceabilityTarget.value(), self.danceabilityTargetLabel,
+                                        self.danceabilityMin, self.danceabilityMax)
+        self.changed_min_param_value(self.danceabilityMin.minimum(), self.danceabilityMinLabel, None)
+        self.changed_max_param_value(self.energyMax.maximum(), self.energyMaxLabel, None)
+        self.changed_target_param_value(self.energyTarget.value(), self.energyTargetLabel,
+                                        self.energyMin, self.energyMax)
+        self.changed_min_param_value(self.energyMin.minimum(), self.energyMinLabel, None)
+        self.changed_max_param_value(self.instrumentalnessMax.maximum(), self.instrumentalnessMaxLabel, None)
+        self.changed_target_param_value(self.instrumentalnessTarget.value(), self.instrumentalnessTargetLabel,
+                                        self.instrumentalnessMin, self.instrumentalnessMax)
+        self.changed_min_param_value(self.instrumentalnessMin.minimum(), self.instrumentalnessMinLabel, None)
+        self.changed_max_param_value(self.keyMax.maximum(), self.keyMaxLabel, None)
+        self.changed_target_param_value(self.keyTarget.value(), self.keyTargetLabel,
+                                        self.keyMin, self.keyMax)
+        self.changed_min_param_value(self.keyMin.minimum(), self.keyMinLabel, None)
+        self.changed_max_param_value(self.livenessMax.maximum(), self.livenessMaxLabel, None)
+        self.changed_target_param_value(self.livenessTarget.value(), self.livenessTargetLabel,
+                                        self.livenessMin, self.livenessMax)
+        self.changed_min_param_value(self.livenessMin.minimum(), self.livenessMinLabel, None)
+        self.changed_max_param_value(self.loudnessMax.maximum(), self.loudnessMaxLabel, None)
+        self.changed_target_param_value(self.loudnessTarget.value(), self.loudnessTargetLabel,
+                                        self.loudnessMin, self.loudnessMax)
+        self.changed_min_param_value(self.loudnessMin.minimum(), self.loudnessMinLabel, None)
+        self.changed_max_param_value(self.modeMax.maximum(), self.modeMaxLabel, None)
+        self.changed_target_param_value(self.modeTarget.value(), self.modeTargetLabel,
+                                        self.modeMin, self.modeMax)
+        self.changed_min_param_value(self.modeMin.minimum(), self.modeMinLabel, None)
+        self.changed_max_param_value(self.popularityMax.maximum(), self.popularityMaxLabel, None)
+        self.changed_target_param_value(self.popularityTarget.value(), self.popularityTargetLabel,
+                                        self.popularityMin, self.popularityMax)
+        self.changed_min_param_value(self.popularityMin.minimum(), self.popularityMinLabel, None)
+        self.changed_max_param_value(self.speechinessMax.maximum(), self.speechinessMaxLabel, None)
+        self.changed_target_param_value(self.speechinessTarget.value(), self.speechinessTargetLabel,
+                                        self.speechinessMin, self.speechinessMax)
+        self.changed_min_param_value(self.speechinessMin.minimum(), self.speechinessMinLabel, None)
+        self.changed_max_param_value(self.tempoMax.maximum(), self.tempoMaxLabel, None)
+        self.changed_target_param_value(self.tempoTarget.value(), self.tempoTargetLabel,
+                                        self.tempoMin, self.tempoMax)
+        self.changed_min_param_value(self.tempoMin.minimum(), self.tempoMinLabel, None)
+        self.changed_max_param_value(self.timeSignatureMax.maximum(), self.timeSignatureMaxLabel, None)
+        self.changed_target_param_value(self.timeSignatureTarget.value(), self.timeSignatureTargetLabel,
+                                        self.timeSignatureMin, self.timeSignatureMax)
+        self.changed_min_param_value(self.timeSignatureMin.minimum(), self.timeSignatureMinLabel, None)
+        self.changed_max_param_value(self.valenceMax.maximum(), self.valenceMaxLabel, None)
+        self.changed_target_param_value(self.valenceTarget.value(), self.valenceTargetLabel,
+                                        self.valenceMin, self.valenceMax)
+        self.changed_min_param_value(self.valenceMin.minimum(), self.valenceMinLabel, None)
+
+        self.sliderss_triggers()
+
+    def changed_min_param_value(self, newValue, valueTargetLabel, restrictionTargets: Union[object, list]):
+        valueTargetLabel.setText(f"min: {newValue}")
+        if type(restrictionTargets) != list:
+            restrictionTargets = [restrictionTargets]
+        for target in restrictionTargets:
+            if target is not None:
+                target.setMinimum(newValue)
+
+    def changed_max_param_value(self, newValue, valueTargetLabel, restrictionTargets: Union[object, list]):
+        valueTargetLabel.setText(f"max: {newValue}")
+        if type(restrictionTargets) != list:
+            restrictionTargets = [restrictionTargets]
+        for target in restrictionTargets:
+            if target is not None:
+                target.setMaximum(newValue)
+
+
+    def changed_target_param_value(self, newValue, valueTargetLabel, minRestictionTarget, maxRestrictionTarget):
+        valueTargetLabel.setText(f"target: {newValue}")
+        if minRestictionTarget is not None:
+            minRestictionTarget.setMaximum(newValue)
+        if maxRestrictionTarget is not None:
+            maxRestrictionTarget.setMinimum(newValue)
 
     def show_authorization_status(self):
         self.api.prepare_token()
@@ -1049,9 +1290,9 @@ class Ui_MainWindow(object):
         target_playlist_id = self.own_playlists[playlists_index]["id"]
 
         acousticness = self.prepare_param_value(self.acousticnessMin, self.acousticnessTarget,
-                                                self.acousticnessMax, self.acousticnessEnabled)
+                                                self.acousticnessMax, self.acousticnessEnabled, multiplier=0.01)
         danceability = self.prepare_param_value(self.danceabilityMin, self.danceabilityTarget,
-                                                self.danceabilityMax, self.danceabilityEnabled)
+                                                self.danceabilityMax, self.danceabilityEnabled, multiplier=0.01)
 
         duration_ms_min_min = -self.durationMin.minimumTime().msecsTo(QtCore.QTime(0, 0, 0))
         duration_ms_min = -self.durationMin.time().msecsTo(QtCore.QTime(0, 0, 0))
@@ -1064,23 +1305,26 @@ class Ui_MainWindow(object):
         )
         duration_ms = [duration_ms, None][int(duration_ms == (None, None, None))]
 
-        energy = self.prepare_param_value(self.energyMin, self.energyTarget, self.energyMax, self.energyEnabled)
+        energy = self.prepare_param_value(self.energyMin, self.energyTarget,
+                                          self.energyMax, self.energyEnabled, multiplier=0.01)
         instrumentalness = self.prepare_param_value(self.instrumentalnessMin, self.instrumentalnessTarget,
-                                                    self.instrumentalnessMax, self.instrumentalnessEnabled)
+                                                    self.instrumentalnessMax, self.instrumentalnessEnabled,
+                                                    multiplier=0.01)
         key = self.prepare_param_value(self.keyMin, self.keyTarget, self.keyMax, self.keyEnabled)
         liveness = self.prepare_param_value(self.livenessMin, self.livenessTarget,
-                                            self.livenessMax, self.livenessEnabled)
+                                            self.livenessMax, self.livenessEnabled, multiplier=0.01)
         loudness = self.prepare_param_value(self.loudnessMin, self.loudnessTarget,
                                             self.loudnessMax, self.loudnessEnabled)
         mode = self.prepare_param_value(self.modeMin, self.modeTarget, self.modeMax, self.modeEnabled)
         popularity = self.prepare_param_value(self.popularityMin, self.popularityTarget,
                                               self.popularityMax, self.popularityEnabled)
         speechiness = self.prepare_param_value(self.speechinessMin, self.speechinessTarget,
-                                               self.speechinessMax, self.speechinessEnabled)
+                                               self.speechinessMax, self.speechinessEnabled, multiplier=0.01)
         tempo = self.prepare_param_value(self.tempoMin, self.tempoTarget, self.tempoMax, self.tempoEnabled)
         time_signature = self.prepare_param_value(self.timeSignatureMin, self.timeSignatureTarget,
                                                   self.timeSignatureMax, self.timeSignatureEnabled)
-        valence = self.prepare_param_value(self.valenceMin, self.valenceTarget, self.valenceMax, self.valenceEnabled)
+        valence = self.prepare_param_value(self.valenceMin, self.valenceTarget,
+                                           self.valenceMax, self.valenceEnabled, multiplier=0.01)
 
         recommendations = self.api.get_recommendations(seeds, limit=self.recommendationsLimitSpinBox.value(),
                                                        acousticness=acousticness, danceability=danceability,
@@ -1098,11 +1342,11 @@ class Ui_MainWindow(object):
         else:
             self.api.overwrite_tracks_in_playlist(target_playlist_id, recommended_track_uris)
 
-    def prepare_param_value(self, paramMin, paramTarget, paramMax, paramEnabled):
+    def prepare_param_value(self, paramMin, paramTarget, paramMax, paramEnabled, multiplier=1.0):
         param = (
-            [paramMin.value(), None][int(paramMin.value() == paramMin.minimum())],
-            [paramTarget.value(), None][int(not paramEnabled.isChecked())],
-            [paramMax.value(), None][int(paramMax.value() == paramMax.maximum())]
+            [paramMin.value()*multiplier, None][int(paramMin.value() == paramMin.minimum())],
+            [paramTarget.value()*multiplier, None][int(not paramEnabled.isChecked())],
+            [paramMax.value()*multiplier, None][int(paramMax.value() == paramMax.maximum())]
         )
         param = [param, None][int(param == (None, None, None))]
         return param

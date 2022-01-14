@@ -1349,6 +1349,8 @@ class Ui_MainWindow(object):
             self.api.overwrite_tracks_in_playlist(target_playlist_id, recommended_track_uris)
 
     def prepare_param_value(self, paramMin, paramTarget, paramMax, paramEnabled, multiplier=1.0):
+        if multiplier == int(multiplier):
+            multiplier = int(multiplier)
         param = (
             [paramMin.value()*multiplier, None][int(paramMin.value() == paramMin.minimum())],
             [paramTarget.value()*multiplier, None][int(not paramEnabled.isChecked())],

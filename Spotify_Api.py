@@ -92,6 +92,7 @@ class SpotifyApi:
         if response.status_code == 200:
             response_j = response.json()
             self.user_id = response_j["id"]
+            self.country = response_j["country"]
             self.configurator.config["user_info"]["user_id"] = self.user_id
             self.configurator.config["user_info"]["country"] = self.country
             self.configurator.write_config()

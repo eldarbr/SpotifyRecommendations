@@ -3,7 +3,6 @@ from time import time
 from base64 import b64encode
 from Configurator import Configurator
 import re
-import json
 
 
 class SpotifyApi:
@@ -297,10 +296,10 @@ class SpotifyApi:
 
     def get_playlist_items(self, playlist_id: str, offset=0):
         """
-        Returns list of track ids that are in the playlist
+        Returns list of track uris that are in the playlist
         :param playlist_id: id of a playlist
         :param offset: offset of returning tracks
-        :return: list of track ids
+        :return: list of track uris
         """
         if not self.prepare_token():
             return None
@@ -310,12 +309,12 @@ class SpotifyApi:
         limit = 100
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
         headers = {"Authorization": "Bearer " + self.token}
-        params = {"offset": offset, "limit": limit, "fields": "total,items(track(id))"}
+        params = {"offset": offset, "limit": limit, "fields": "total,items(track(uri))"}
         response = requests.get(url, headers=headers, params=params)
         if response.status_code == 200:
             content = response.json()
             for track in content["items"]:
-                tracks += [track["track"]["id"]]
+                tracks += [track["track"]["uri"]]
             if limit+offset < content["total"]:
                 tracks += self.get_playlist_items(playlist_id, offset+limit)
             return tracks
@@ -346,7 +345,7 @@ class SpotifyApi:
                     if response.status_code != 200:
                         errors += [response.text]
                     data["tracks"] = []
-                data["tracks"] += [{"uri": f"spotify:track:{playlist_items[i]}"}]
+                data["tracks"] += [{"uri": playlist_items[i]}]
             response = requests.delete(url, headers=headers, json=data)
             print(response.request.body)
             if response.status_code != 200:
@@ -370,7 +369,7 @@ class SpotifyApi:
             current_tracks = self.get_playlist_items(playlist_id)
             new_tracks_filtered = []
             for new_track in track_uris:
-                if not new_track.split(":")[-1] in current_tracks:
+                if new_track not in current_tracks:
                     new_tracks_filtered += [new_track]
         else:
             new_tracks_filtered = track_uris

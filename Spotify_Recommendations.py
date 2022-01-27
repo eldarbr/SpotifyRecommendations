@@ -1344,7 +1344,7 @@ class Ui_MainWindow(object):
             recommended_track_uris += [track["uri"]]
 
         if self.appendRadioButton.isChecked():
-            self.api.append_tracks_to_playlist(target_playlist_id, recommended_track_uris)
+            self.api.add_tracks_to_playlist(target_playlist_id, recommended_track_uris)
         else:
             self.api.overwrite_tracks_in_playlist(target_playlist_id, recommended_track_uris)
 

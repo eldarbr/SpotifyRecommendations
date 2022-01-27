@@ -3,6 +3,7 @@ from time import time
 from base64 import b64encode
 from Configurator import Configurator
 import re
+import json
 
 
 class SpotifyApi:
@@ -34,6 +35,10 @@ class SpotifyApi:
         self.configurator.write_config()
 
     def prepare_token(self):
+        """
+        If the token is expired, get a new one
+        :return: valid token
+        """
         self.read_data()
         if self.token_expiration < time():
             self.get_token()
@@ -42,6 +47,10 @@ class SpotifyApi:
         return self.valid_token
 
     def get_token(self):
+        """
+        Grant new or renew old token
+        :return: token
+        """
         if len(self.refresh_token) + len(self.auth_code) == 0:
             print("No saved refresh token or authorization code")
             self.valid_token = False
@@ -78,6 +87,9 @@ class SpotifyApi:
         self.valid_token = True
 
     def get_user_info(self):
+        """
+        Get user profile information
+        """
         if len(self.user_id) > 0:
             return 0
 
@@ -102,6 +114,10 @@ class SpotifyApi:
             return None
 
     def get_playlists_list(self):
+        """
+        Get list of user's playlists
+        :return:
+        """
         if not self.prepare_token():
             return None
 
@@ -133,6 +149,9 @@ class SpotifyApi:
     def get_recommendations(self, seeds, limit=20, acousticness=None, danceability=None, duration_ms=None, energy=None,
                             instrumentalness=None, key=None, liveness=None, loudness=None, mode=None, popularity=None,
                             speechiness=None, tempo=None, time_signature=None, valence=None):
+        """
+        Generate recommendations by seeds according to specified parameters
+        """
         if not self.prepare_token():
             return None
 
@@ -277,20 +296,38 @@ class SpotifyApi:
         return None
 
     def get_playlist_items(self, playlist_id: str, offset=0):
+        """
+        Returns list of track ids that are in the playlist
+        :param playlist_id: id of a playlist
+        :param offset: offset of returning tracks
+        :return: list of track ids
+        """
         if not self.prepare_token():
             return None
 
-        url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
+        tracks = list()
+
+        limit = 100
+        url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
         headers = {"Authorization": "Bearer " + self.token}
-        params = {"offset": offset}
+        params = {"offset": offset, "limit": limit, "fields": "total,items(track(id))"}
         response = requests.get(url, headers=headers, params=params)
         if response.status_code == 200:
-            return response.json()
+            content = response.json()
+            for track in content["items"]:
+                tracks += [track["track"]["id"]]
+            if limit+offset < content["total"]:
+                tracks += self.get_playlist_items(playlist_id, offset+limit)
+            return tracks
         else:
             print("[SpotifyApi get_playlist_items] Error:", response.json())
             return None
 
     def flush_playlist(self, playlist_id: str):
+        """
+        Deletes all items in specified playlist
+        :param playlist_id: id of playlist
+        """
         if not self.prepare_token():
             return None
         playlist_items = self.get_playlist_items(playlist_id)
@@ -302,52 +339,67 @@ class SpotifyApi:
             headers = {"Authorization": "Bearer " + self.token}
             data = {"tracks": []}
             errors = []
-            if playlist_items["tracks"]["limit"] == 100:
-                for track in playlist_items["tracks"]["items"]:
-                    data["tracks"] += [{"uri": track["track"]["uri"]}]
+            for i in range(len(playlist_items)):
+                if i % 100 == 0 and i != 0:
+                    response = requests.delete(url, headers=headers, json=data)
+                    print(response.request.body)
+                    if response.status_code != 200:
+                        errors += [response.text]
+                    data["tracks"] = []
+                data["tracks"] += [{"uri": f"spotify:track:{playlist_items[i]}"}]
             response = requests.delete(url, headers=headers, json=data)
+            print(response.request.body)
             if response.status_code != 200:
                 errors += [response.text]
-            response = requests.delete(url, headers=headers, json=data)
-            if playlist_items["tracks"]["total"] > len(playlist_items["tracks"]["items"]):
-                recursive = self.flush_playlist(playlist_id)
-                if recursive != 0:
-                    return recursive
-            if response.status_code != 200:
-                print("[SpotifyApi flush_playlist] Error flushing:", response.text)
+            if len(errors) != 0:
+                print("[SpotifyApi flush_playlist] Error flushing:", "\n", errors)
                 return None
             return 0
 
-    def append_tracks_to_playlist(self, playlist_id: str, track_uris: list, add_duplicates=False):
+    def add_tracks_to_playlist(self, playlist_id: str, track_uris: list, add_duplicates=False):
+        """
+        Add tracks to a playlist
+        :param playlist_id: id of target playlist
+        :param track_uris: list of track uris to add
+        :param add_duplicates: if duplicated tracks should be added
+        """
         if not self.prepare_token():
             return None
 
         if not add_duplicates:
-            offset = 0
-            content = self.get_playlist_items(playlist_id)
-            while offset+content["tracks"]["total"] > content["tracks"]["limit"]:
-                offset += content["tracks"]["total"]
-                content["tracks"] += self.get_playlist_items(playlist_id, offset)
-            for content_item in content["tracks"]["items"]:
-                if content_item["track"]["uri"] in track_uris:
-                    track_uris.remove(content_item["track"]["uri"])
+            current_tracks = self.get_playlist_items(playlist_id)
+            new_tracks_filtered = []
+            for new_track in track_uris:
+                if not new_track.split(":")[-1] in current_tracks:
+                    new_tracks_filtered += [new_track]
+        else:
+            new_tracks_filtered = track_uris
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
         headers = {"Authorization": "Bearer " + self.token}
-        data = {"uris": track_uris}
+        data = {"uris": new_tracks_filtered}
         response = requests.post(url, headers=headers, json=data)
+        print(len(new_tracks_filtered), "\n", new_tracks_filtered)
         if response.status_code == 200 or response.status_code == 201:
             return response.json()
         else:
-            print("[SpotifyApi append_tracks_to_playlist] Error: " + response.text)
+            print("[SpotifyApi add_tracks_to_playlist] Error: " + response.text)
             return None
 
     def overwrite_tracks_in_playlist(self, playlist_id: str, track_uris: list):
+        """
+        Flush playlist then add tracks to it
+        :param playlist_id: target playlist
+        :param track_uris: list of track uris to add
+        """
         if not self.prepare_token():
             return None
         self.flush_playlist(playlist_id)
-        return self.append_tracks_to_playlist(playlist_id, track_uris)
+        return self.add_tracks_to_playlist(playlist_id, track_uris)
 
     def get_track_audio_features(self, track_id):
+        """
+        Get track's audio features
+        """
         if not self.prepare_token():
             return None
         url = f"https://api.spotify.com/v1/audio-features/{track_id}"
@@ -357,9 +409,3 @@ class SpotifyApi:
             return response.json()
         else:
             print("[SpotifyApi get_track_audio features] Error:", response.text)
-
-
-if __name__ == "__main__":
-    config = Configurator()
-    api = SpotifyApi()
-    print(api.get_playlist_items("6hiGB76fT5SQlztmAeV5pY"))

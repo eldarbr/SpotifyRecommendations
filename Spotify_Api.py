@@ -152,31 +152,41 @@ class SpotifyApi:
         Generate recommendations by seeds according to specified parameters
         """
         if not self.prepare_token():
-            return None
+            return
 
         if self.get_user_info() is None:
             print("[SpotifyApi get_recommendations] Error getting user info")
-            return None
+            return
 
         if len(seeds) > 5:
-            print("[SpotifyApi get_recommendations] Seeds limit (5) exceeded")
-            return None
+            print("[SpotifyApi get_recommendations] Error: Seeds limit (5) exceeded")
+            return
 
         seed_artists = list()
         seed_tracks = list()
         seed_genres = list()
 
         for seed in seeds:
-            sp_link = re.search(r"http[s]*://open.spotify.com/(track|artist|genre)/[\dA-Za-z]+", seed)
-            if sp_link is None:
+            sp_link_http = re.search(r"http[s]*://open.spotify.com/(track|artist|genre)/([\dA-Za-z]+)", seed)
+            sp_link_uri = re.search(r"spotify:(track|artist|genre):([\dA-Za-z]+)", seed)
+            if not bool(sp_link_uri) ^ bool(sp_link_http):
                 print(f"[SpotifyApi get_recommendations] Spotify link not found at {seed}")
+                continue
             else:
-                if "artist" in sp_link[0]:
-                    seed_artists += [sp_link[0].split("/")[-1]]
-                elif "track" in sp_link[0]:
-                    seed_tracks += [sp_link[0].split("/")[-1]]
+                if sp_link_uri:
+                    sp_link = sp_link_uri
                 else:
-                    seed_genres += [sp_link[0].split("/")[-1]]
+                    sp_link = sp_link_http
+            if sp_link[1] == "artist":
+                seed_artists += [sp_link[2]]
+            elif sp_link[1] == "track":
+                seed_tracks += [sp_link[2]]
+            else:
+                seed_genres += [sp_link[2]]
+
+        if len(seed_artists)+len(seed_genres)+len(seed_tracks) == 0:
+            print("[SpotifyApi get_recommendations] Error: seeds pool is empty")
+            return
 
         url = "https://api.spotify.com/v1/recommendations"
         params = {
@@ -373,6 +383,10 @@ class SpotifyApi:
                     new_tracks_filtered += [new_track]
         else:
             new_tracks_filtered = track_uris
+        if len(new_tracks_filtered) == 0:
+            print("[SpotifyApi add_tracks_to_playlist] Info: list of tracks was empty",
+                  "(duplicates filtering was", ["ON)", "OFF)"][int(add_duplicates)])
+            return 0
         url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
         headers = {"Authorization": "Bearer " + self.token}
         data = {"uris": new_tracks_filtered}

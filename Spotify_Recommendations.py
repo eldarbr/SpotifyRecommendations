@@ -1361,11 +1361,15 @@ class Ui_MainWindow(object):
 
     def track_analysis(self):
         url = self.analysisUrlEdit.text()
-        q = re.search(r"http[s]*://open.spotify.com/track/([\dA-Za-z]+)", url)
+        q = self.api.link_patterns_extract(url)
         if q is None:
             return
-        track_id = q[1]
+        track_id = q[2]
         audio_features = self.api.get_track_audio_features(track_id)
+        del audio_features["type"]
+        del audio_features["track_href"]
+        del audio_features["id"]
+        del audio_features["analysis_url"]
         s = json.dumps(audio_features, indent='       ')
         self.analysisResultTextBrowser.setText(s)
 

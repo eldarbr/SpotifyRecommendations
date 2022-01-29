@@ -167,16 +167,10 @@ class SpotifyApi:
         seed_genres = list()
 
         for seed in seeds:
-            sp_link_http = re.search(r"http[s]*://open.spotify.com/(track|artist|genre)/([\dA-Za-z]+)", seed)
-            sp_link_uri = re.search(r"spotify:(track|artist|genre):([\dA-Za-z]+)", seed)
-            if not bool(sp_link_uri) ^ bool(sp_link_http):
+            sp_link = self.link_patterns_extract(seed)
+            if not sp_link:
                 print(f"[SpotifyApi get_recommendations] Spotify link not found at {seed}")
                 continue
-            else:
-                if sp_link_uri:
-                    sp_link = sp_link_uri
-                else:
-                    sp_link = sp_link_http
             if sp_link[1] == "artist":
                 seed_artists += [sp_link[2]]
             elif sp_link[1] == "track":
@@ -419,6 +413,46 @@ class SpotifyApi:
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
-            return response.json()
+            content = response.json()
+            track_info = self.get_track_info(track_id)
+            content["name"] = track_info["name"]
+            content["genres"] = track_info["genres"]
+            content["popularity"] = track_info["popularity"]
+            return content
         else:
-            print("[SpotifyApi get_track_audio features] Error:", response.text)
+            print("[SpotifyApi get_track_audio_features] Error:", response.text)
+
+    def get_track_info(self, track_id):
+        if not self.prepare_token():
+            return None
+        url = f"https://api.spotify.com/v1/tracks/{track_id}"
+        headers = {"Authorization": "Bearer " + self.token}
+        response = requests.get(url, headers=headers)
+        genres = []
+        if response.status_code == 200:
+            content = response.json()
+            for artist in content["artists"]:
+                if "genres" in artist:
+                    genres += artist["genres"]
+            if "popularity" in content:
+                popularity = content["popularity"]
+            else:
+                popularity = None
+
+            return {"genres": list(set(genres)), "popularity": popularity, "name": content["name"]}
+        else:
+            print("[SpotifyApi get_possible_genres] Error:", response.text)
+
+    def link_patterns_extract(self, link):
+        link_http = re.search(r"http[s]*://open.spotify.com/(track|artist|genre)/([\dA-Za-z]+)", link)
+        link_uri = re.search(r"spotify:(track|artist|genre):([\dA-Za-z]+)", link)
+        if link_uri:
+            sp_link = link_uri
+        else:
+            sp_link = link_http
+        return sp_link
+
+
+if __name__ == "__main__":
+    api = SpotifyApi()
+    print(api.get_track_audio_features("04l4Ueq5FzSbTvxBqJ1ehu"))

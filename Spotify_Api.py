@@ -345,13 +345,11 @@ class SpotifyApi:
             for i in range(len(playlist_items)):
                 if i % 100 == 0 and i != 0:
                     response = requests.delete(url, headers=headers, json=data)
-                    print(response.request.body)
                     if response.status_code != 200:
                         errors += [response.text]
                     data["tracks"] = []
                 data["tracks"] += [{"uri": playlist_items[i]}]
             response = requests.delete(url, headers=headers, json=data)
-            print(response.request.body)
             if response.status_code != 200:
                 errors += [response.text]
             if len(errors) != 0:
@@ -385,7 +383,7 @@ class SpotifyApi:
         headers = {"Authorization": "Bearer " + self.token}
         data = {"uris": new_tracks_filtered}
         response = requests.post(url, headers=headers, json=data)
-        print(len(new_tracks_filtered), "\n", new_tracks_filtered)
+        print(len(new_tracks_filtered))
         if response.status_code == 200 or response.status_code == 201:
             return response.json()
         else:
@@ -455,4 +453,4 @@ class SpotifyApi:
 
 if __name__ == "__main__":
     api = SpotifyApi()
-    print(api.get_track_audio_features("04l4Ueq5FzSbTvxBqJ1ehu"))
+    print(api.get_track_info("3aopBAxbSQdVuB7apE83Ay"))

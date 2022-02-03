@@ -24,13 +24,15 @@ class SpotifyOAuth:
             "client_id": self.configurator.config["general"]["client_id"],
             "response_type": "code",
             "redirect_uri": self.configurator.config["general"]["redirect_uri"],
-            "scope": "playlist-read-private playlist-modify-private user-read-private",
+            "scope": "playlist-read-private playlist-read-collaborative playlist-modify-private "
+                     "playlist-modify-public user-read-private",
             "state": str(self.app_state)
         }
         link = "https://accounts.spotify.com/authorize?"
         for key in params.keys():
             link += "=".join((key, params[key])) + "&"
         link = link[:-1]
+        print(params["scope"])
         webbrowser.open(link)
         self.receive_auth_code()
         if self.auth_code is None:

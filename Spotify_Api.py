@@ -39,7 +39,7 @@ class SpotifyApi:
         :return: valid token
         """
         self.read_data()
-        if self.token_expiration < time():
+        if self.token_expiration < time() or self.auth_code:
             self.get_token()
         else:
             self.valid_token = True
@@ -89,11 +89,11 @@ class SpotifyApi:
         """
         Get user profile information
         """
-        if len(self.user_id) > 0:
-            return 0
-
         if not self.prepare_token():
             return None
+
+        if len(self.user_id) > 0:
+            return 0
 
         url = "https://api.spotify.com/v1/me"
         headers = {
@@ -101,6 +101,7 @@ class SpotifyApi:
         }
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
+            print(response.text)
             response_j = response.json()
             self.user_id = response_j["id"]
             self.country = response_j["country"]
@@ -440,6 +441,43 @@ class SpotifyApi:
             return {"genres": list(set(genres)), "popularity": popularity, "name": content["name"]}
         else:
             print("[SpotifyApi get_possible_genres] Error:", response.text)
+            return
+
+    def get_users_top_items(self, type: int, limit=20, offset=0, time_range=1):
+        """
+        Get the current user's top artists or tracks based on calculated affinity.
+        https://developer.spotify.com/documentation/web-api/reference/#/operations/get-users-top-artists-and-tracks
+        :param type: the type of entity to return, 0 stands for artists, 1 stands for tracks
+        :param limit: the maximum number of items to return
+        :param offset: the index of the first item to return
+        :param time_range: over what time frame the affinities are computed,
+        0 stands for short_term (approximately last 4 weeks),
+        1 stands for medium_term (approximately last 6 months),
+        2 stands for long_term (calculated from several years)
+        :return:
+        """
+        if not self.prepare_token():
+            return None
+        if type in (0, 1):
+            type = ["artists", "tracks"][type]
+        else:
+            print("[SpotifyApi get_users_top_items] Items type not in range (0, 1)")
+            return
+        if time_range in (0, 1, 2):
+            time_range = ["short_term", "medium_term", "long_term"][time_range]
+        else:
+            print("[SpotifyApi get_users_top_items] Items time_range not in range (0, 1, 2)")
+            return
+        url = f"https://api.spotify.com/v1/me/top/{type}"
+        headers = {"Authorization": "Bearer " + self.token}
+        response = requests.get(url, headers=headers,
+                                params={"limit": limit, "offset": offset, "time_range": time_range})
+        if response.status_code == 200:
+            return response.text
+            return response.json()
+        else:
+            print("[SpotifyApi get_users_top_items] Error:", response.status_code, response.text)
+            return
 
     def link_patterns_extract(self, link):
         link_http = re.search(r"http[s]*://open.spotify.com/(track|artist|genre)/([\dA-Za-z]+)", link)
@@ -453,4 +491,3 @@ class SpotifyApi:
 
 if __name__ == "__main__":
     api = SpotifyApi()
-    print(api.get_track_info("3aopBAxbSQdVuB7apE83Ay"))

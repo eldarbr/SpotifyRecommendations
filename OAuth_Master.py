@@ -25,7 +25,7 @@ class SpotifyOAuth:
             "response_type": "code",
             "redirect_uri": self.configurator.config["general"]["redirect_uri"],
             "scope": "playlist-read-private playlist-read-collaborative playlist-modify-private "
-                     "playlist-modify-public user-read-private",
+                     "playlist-modify-public user-read-private user-top-read",
             "state": str(self.app_state)
         }
         link = "https://accounts.spotify.com/authorize?"

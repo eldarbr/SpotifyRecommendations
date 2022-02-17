@@ -6,7 +6,7 @@ from Configurator import Configurator
 from OAuth_Master import SpotifyOAuth
 from Spotify_Api import SpotifyApi
 from typing import Union
-import datetime
+import webbrowser
 import json
 
 
@@ -15,6 +15,7 @@ class Ui_MainWindow(object):
         self.configurator = Configurator()
         self.api = SpotifyApi()
         self.user_id = None
+        self.statistics = None
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -932,6 +933,7 @@ class Ui_MainWindow(object):
         self.analysisTab = QtWidgets.QWidget()
         self.analysisTab.setObjectName("analysisTab")
         self.verticalLayout_5 = QtWidgets.QVBoxLayout(self.analysisTab)
+        self.verticalLayout_5.setContentsMargins(20, 20, 20, -1)
         self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.analysisUrlEdit = QtWidgets.QLineEdit(self.analysisTab)
         self.analysisUrlEdit.setObjectName("analysisUrlEdit")
@@ -951,13 +953,69 @@ class Ui_MainWindow(object):
         self.horizontalLayout_15.addWidget(self.analysisButton)
         self.verticalLayout_5.addWidget(self.analysisButtonWidget)
         self.analysisResultTextBrowser = QtWidgets.QTextBrowser(self.analysisTab)
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.analysisResultTextBrowser.setFont(font)
+                            
+                             
+                                                    
         self.analysisResultTextBrowser.setObjectName("analysisResultTextBrowser")
         self.verticalLayout_5.addWidget(self.analysisResultTextBrowser)
         self.tabWidget.addTab(self.analysisTab, "")
-        self.gridLayout.addWidget(self.tabWidget, 0, 0, 1, 1)
+                                                             
+        self.statisticsTab = QtWidgets.QWidget()
+        self.statisticsTab.setObjectName("statisticsTab")
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.statisticsTab)
+        self.verticalLayout_7.setContentsMargins(20, 20, 20, -1)
+        self.verticalLayout_7.setSpacing(15)
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.statisticsSelectionWidget = QtWidgets.QWidget(self.statisticsTab)
+        self.statisticsSelectionWidget.setObjectName("statisticsSelectionWidget")
+        self.horizontalLayout_21 = QtWidgets.QHBoxLayout(self.statisticsSelectionWidget)
+        self.horizontalLayout_21.setObjectName("horizontalLayout_21")
+        spacerItem12 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_21.addItem(spacerItem12)
+        self.statisticsTermComboBox = QtWidgets.QComboBox(self.statisticsSelectionWidget)
+        self.statisticsTermComboBox.setMinimumSize(QtCore.QSize(80, 0))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.statisticsTermComboBox.setFont(font)
+        self.statisticsTermComboBox.setEditable(False)
+        self.statisticsTermComboBox.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+        self.statisticsTermComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
+        self.statisticsTermComboBox.setObjectName("statisticsTermComboBox")
+        self.statisticsTermComboBox.addItem("")
+        self.statisticsTermComboBox.addItem("")
+        self.statisticsTermComboBox.addItem("")
+        self.horizontalLayout_21.addWidget(self.statisticsTermComboBox)
+        spacerItem13 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_21.addItem(spacerItem13)
+        self.statisticsItemsTypeComboBox = QtWidgets.QComboBox(self.statisticsSelectionWidget)
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.statisticsItemsTypeComboBox.setFont(font)
+        self.statisticsItemsTypeComboBox.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
+        self.statisticsItemsTypeComboBox.setObjectName("statisticsItemsTypeComboBox")
+        self.statisticsItemsTypeComboBox.addItem("")
+        self.statisticsItemsTypeComboBox.addItem("")
+        self.horizontalLayout_21.addWidget(self.statisticsItemsTypeComboBox)
+        spacerItem14 = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_21.addItem(spacerItem14)
+        self.statisticsSelectionButton = QtWidgets.QPushButton(self.statisticsSelectionWidget)
+        self.statisticsSelectionButton.setMinimumSize(QtCore.QSize(120, 0))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.statisticsSelectionButton.setFont(font)
+        self.statisticsSelectionButton.setObjectName("statisticsSelectionButton")
+        self.horizontalLayout_21.addWidget(self.statisticsSelectionButton)
+        spacerItem15 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.horizontalLayout_21.addItem(spacerItem15)
+        self.verticalLayout_7.addWidget(self.statisticsSelectionWidget)
+        self.statisticsListWidget = QtWidgets.QListWidget(self.statisticsTab)
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.statisticsListWidget.setFont(font)
+        self.statisticsListWidget.setObjectName("statisticsListWidget")
+        self.verticalLayout_7.addWidget(self.statisticsListWidget)
+        self.tabWidget.addTab(self.statisticsTab, "")
+        self.gridLayout.addWidget(self.tabWidget)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -1045,12 +1103,21 @@ class Ui_MainWindow(object):
             self.tabWidget.indexOf(self.recommendationsTab), _translate("MainWindow", "Recommendations"))
         self.analysisButton.setText(_translate("MainWindow", "Get analysis"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.analysisTab), _translate("MainWindow", "Analysis"))
+        self.statisticsTermComboBox.setItemText(0, _translate("MainWindow", "Short term"))
+        self.statisticsTermComboBox.setItemText(1, _translate("MainWindow", "Medium term"))
+        self.statisticsTermComboBox.setItemText(2, _translate("MainWindow", "Long term"))
+        self.statisticsItemsTypeComboBox.setItemText(0, _translate("MainWindow", "Artists"))
+        self.statisticsItemsTypeComboBox.setItemText(1, _translate("MainWindow", "Tracks"))
+        self.statisticsSelectionButton.setText(_translate("MainWindow", "Show statistics"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.statisticsTab), _translate("MainWindow", "Statistics"))                                                                                       
 
     def functionality(self):
         self.authorizeButton.clicked.connect(self.authorize)
         self.updatePlaylistsButton.clicked.connect(self.reload_playlists_list)
         self.generateButton.clicked.connect(self.get_recommendations)
         self.analysisButton.clicked.connect(self.track_analysis)
+        self.statisticsSelectionButton.clicked.connect(self.show_statistics)
+        self.statisticsListWidget.itemDoubleClicked.connect(self.open_statistics_item)
 
     def after_init(self):
         self.sliderss_init()
@@ -1372,6 +1439,17 @@ class Ui_MainWindow(object):
         del audio_features["analysis_url"]
         s = json.dumps(audio_features, indent='       ').replace('"', '')
         self.analysisResultTextBrowser.setText(s)
+
+    def show_statistics(self):
+        self.statisticsListWidget.clear()
+        term = self.statisticsTermComboBox.currentIndex()
+        items_type = self.statisticsItemsTypeComboBox.currentIndex()
+        self.statistics = self.api.get_users_top_items(items_type, time_range=term, limit=50)
+        for i in range(min(self.statistics["limit"], self.statistics["total"])):
+            self.statisticsListWidget.addItem("{}. {}".format(i+1, self.statistics["items"][i]["name"]))
+
+    def open_statistics_item(self):
+        webbrowser.open(self.statistics["items"][self.statisticsListWidget.currentRow()]["uri"])
 
 
 if __name__ == "__main__":

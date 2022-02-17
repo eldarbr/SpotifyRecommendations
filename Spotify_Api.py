@@ -90,7 +90,7 @@ class SpotifyApi:
         Get user profile information
         """
         if not self.prepare_token():
-            return None
+            return
 
         if len(self.user_id) > 0:
             return 0
@@ -111,7 +111,7 @@ class SpotifyApi:
             return 0
         else:
             print("[SpotifyApi get_user_info] Error: " + response.text)
-            return None
+            return
 
     def get_playlists_list(self):
         """
@@ -119,7 +119,7 @@ class SpotifyApi:
         :return:
         """
         if not self.prepare_token():
-            return None
+            return
 
         if self.get_user_info() is None:
             print("[SpotifyApi get_playlists_list] Error getting user info")
@@ -144,7 +144,7 @@ class SpotifyApi:
             return playlists
         else:
             print("[SpotifyApi get_playlists_list] Error: " + response.text)
-            return None
+            return
 
     def get_recommendations(self, seeds, limit=20, acousticness=None, danceability=None, duration_ms=None, energy=None,
                             instrumentalness=None, key=None, liveness=None, loudness=None, mode=None, popularity=None,
@@ -297,7 +297,7 @@ class SpotifyApi:
         if response.status_code == 200:
             return response.json()
         print("[SpotifyApi get_recommendations] Error:", response.json())
-        return None
+        return
 
     def get_playlist_items(self, playlist_id: str, offset=0):
         """
@@ -307,7 +307,7 @@ class SpotifyApi:
         :return: list of track uris
         """
         if not self.prepare_token():
-            return None
+            return
 
         tracks = list()
 
@@ -325,7 +325,7 @@ class SpotifyApi:
             return tracks
         else:
             print("[SpotifyApi get_playlist_items] Error:", response.json())
-            return None
+            return
 
     def flush_playlist(self, playlist_id: str):
         """
@@ -333,11 +333,11 @@ class SpotifyApi:
         :param playlist_id: id of playlist
         """
         if not self.prepare_token():
-            return None
+            return
         playlist_items = self.get_playlist_items(playlist_id)
         if playlist_items is None:
             print("[SpotifyApi flush_playlist] Error getting playlist items")
-            return None
+            return
         else:
             url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
             headers = {"Authorization": "Bearer " + self.token}
@@ -355,7 +355,7 @@ class SpotifyApi:
                 errors += [response.text]
             if len(errors) != 0:
                 print("[SpotifyApi flush_playlist] Error flushing:", "\n", errors)
-                return None
+                return
             return 0
 
     def add_tracks_to_playlist(self, playlist_id: str, track_uris: list, add_duplicates=False):
@@ -366,7 +366,7 @@ class SpotifyApi:
         :param add_duplicates: if duplicated tracks should be added
         """
         if not self.prepare_token():
-            return None
+            return
 
         if not add_duplicates:
             current_tracks = self.get_playlist_items(playlist_id)
@@ -389,7 +389,7 @@ class SpotifyApi:
             return response.json()
         else:
             print("[SpotifyApi add_tracks_to_playlist] Error: " + response.text)
-            return None
+            return
 
     def overwrite_tracks_in_playlist(self, playlist_id: str, track_uris: list):
         """
@@ -398,7 +398,7 @@ class SpotifyApi:
         :param track_uris: list of track uris to add
         """
         if not self.prepare_token():
-            return None
+            return
         self.flush_playlist(playlist_id)
         return self.add_tracks_to_playlist(playlist_id, track_uris)
 
@@ -407,7 +407,7 @@ class SpotifyApi:
         Get track's audio features
         """
         if not self.prepare_token():
-            return None
+            return
         url = f"https://api.spotify.com/v1/audio-features/{track_id}"
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, headers=headers)
@@ -415,51 +415,69 @@ class SpotifyApi:
             content = response.json()
             track_info = self.get_track_info(track_id)
             content["name"] = track_info["name"]
-            content["genres"] = track_info["genres"]
-            content["popularity"] = track_info["popularity"]
+            content["genres"] = []
+            for artist in track_info["artists"]:
+                content["genres"] += self.get_artist(artist["id"])["genres"]
+            content["genres"] = list(set(content["genres"]))
+            if "popularity" in track_info:
+                content["popularity"] = track_info["popularity"]
+            else:
+                content["popularity"] = None
             return content
         else:
             print("[SpotifyApi get_track_audio_features] Error:", response.text)
 
     def get_track_info(self, track_id):
+        """
+        Track info by track id
+        :param track_id: the Spotify ID of the track
+        """
         if not self.prepare_token():
-            return None
+            return
         url = f"https://api.spotify.com/v1/tracks/{track_id}"
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, headers=headers)
-        genres = []
         if response.status_code == 200:
-            content = response.json()
-            for artist in content["artists"]:
-                if "genres" in artist:
-                    genres += artist["genres"]
-            if "popularity" in content:
-                popularity = content["popularity"]
-            else:
-                popularity = None
-
-            return {"genres": list(set(genres)), "popularity": popularity, "name": content["name"]}
+            return response.json()
         else:
             print("[SpotifyApi get_possible_genres] Error:", response.text)
             return
 
-    def get_users_top_items(self, type: int, limit=20, offset=0, time_range=1):
+    def get_artist(self, artist_id):
+        """
+        Get Spotify catalog information for a single artist
+        https://developer.spotify.com/documentation/web-api/reference/#/operations/get-an-artist
+        :param artist_id: the Spotify ID of the artist
+        :return: an artist
+        """
+        if not self.prepare_token():
+            return
+        url = f"https://api.spotify.com/v1/artists/{artist_id}"
+        headers = {"Authorization": "Bearer " + self.token}
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print("[SpotifyApi get_artist] Error:", response.text)
+            return
+
+    def get_users_top_items(self, items_type: int, limit=20, offset=0, time_range=1):
         """
         Get the current user's top artists or tracks based on calculated affinity.
         https://developer.spotify.com/documentation/web-api/reference/#/operations/get-users-top-artists-and-tracks
-        :param type: the type of entity to return, 0 stands for artists, 1 stands for tracks
+        :param items_type: the type of entity to return, 0 stands for artists, 1 stands for tracks
         :param limit: the maximum number of items to return
         :param offset: the index of the first item to return
         :param time_range: over what time frame the affinities are computed,
         0 stands for short_term (approximately last 4 weeks),
         1 stands for medium_term (approximately last 6 months),
         2 stands for long_term (calculated from several years)
-        :return:
+        :return: pages of content
         """
         if not self.prepare_token():
-            return None
-        if type in (0, 1):
-            type = ["artists", "tracks"][type]
+            return
+        if items_type in (0, 1):
+            items_type = ["artists", "tracks"][items_type]
         else:
             print("[SpotifyApi get_users_top_items] Items type not in range (0, 1)")
             return
@@ -468,12 +486,11 @@ class SpotifyApi:
         else:
             print("[SpotifyApi get_users_top_items] Items time_range not in range (0, 1, 2)")
             return
-        url = f"https://api.spotify.com/v1/me/top/{type}"
+        url = f"https://api.spotify.com/v1/me/top/{items_type}"
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, headers=headers,
                                 params={"limit": limit, "offset": offset, "time_range": time_range})
         if response.status_code == 200:
-            return response.text
             return response.json()
         else:
             print("[SpotifyApi get_users_top_items] Error:", response.status_code, response.text)

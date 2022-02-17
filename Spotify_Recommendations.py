@@ -6,7 +6,7 @@ from Configurator import Configurator
 from OAuth_Master import SpotifyOAuth
 from Spotify_Api import SpotifyApi
 from typing import Union
-import re
+import datetime
 import json
 
 
@@ -1370,7 +1370,7 @@ class Ui_MainWindow(object):
         del audio_features["track_href"]
         del audio_features["id"]
         del audio_features["analysis_url"]
-        s = json.dumps(audio_features, indent='       ')
+        s = json.dumps(audio_features, indent='       ').replace('"', '')
         self.analysisResultTextBrowser.setText(s)
 
 

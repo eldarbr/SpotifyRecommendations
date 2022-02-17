@@ -4,7 +4,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from Configurator import Configurator
 from OAuth_Master import SpotifyOAuth
-from Spotify_Api import SpotifyApi
+from Spotify_Api import SpotifyApi, link_patterns_extract
 from typing import Union
 import webbrowser
 import json
@@ -1428,7 +1428,7 @@ class Ui_MainWindow(object):
 
     def track_analysis(self):
         url = self.analysisUrlEdit.text()
-        q = self.api.link_patterns_extract(url)
+        q = link_patterns_extract(url)
         if q is None:
             return
         track_id = q[2]

@@ -5,6 +5,16 @@ from Configurator import Configurator
 import re
 
 
+def link_patterns_extract(link):
+    link_http = re.search(r"http[s]*://open.spotify.com/(track|artist|genre)/([\dA-Za-z]+)", link)
+    link_uri = re.search(r"spotify:(track|artist|genre):([\dA-Za-z]+)", link)
+    if link_uri:
+        sp_link = link_uri
+    else:
+        sp_link = link_http
+    return sp_link
+
+
 class SpotifyApi:
     def __init__(self):
         self.configurator = Configurator()
@@ -168,7 +178,7 @@ class SpotifyApi:
         seed_genres = list()
 
         for seed in seeds:
-            sp_link = self.link_patterns_extract(seed)
+            sp_link = link_patterns_extract(seed)
             if not sp_link:
                 print(f"[SpotifyApi get_recommendations] Spotify link not found at {seed}")
                 continue
@@ -495,15 +505,6 @@ class SpotifyApi:
         else:
             print("[SpotifyApi get_users_top_items] Error:", response.status_code, response.text)
             return
-
-    def link_patterns_extract(self, link):
-        link_http = re.search(r"http[s]*://open.spotify.com/(track|artist|genre)/([\dA-Za-z]+)", link)
-        link_uri = re.search(r"spotify:(track|artist|genre):([\dA-Za-z]+)", link)
-        if link_uri:
-            sp_link = link_uri
-        else:
-            sp_link = link_http
-        return sp_link
 
 
 if __name__ == "__main__":

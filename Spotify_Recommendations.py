@@ -1115,7 +1115,7 @@ class Ui_MainWindow(object):
         self.authorizeButton.clicked.connect(self.authorize)
         self.updatePlaylistsButton.clicked.connect(self.reload_playlists_list)
         self.generateButton.clicked.connect(self.get_recommendations)
-        self.analysisButton.clicked.connect(self.track_analysis)
+        self.analysisButton.clicked.connect(self.show_analysis)
         self.statisticsSelectionButton.clicked.connect(self.show_statistics)
         self.statisticsListWidget.itemDoubleClicked.connect(self.open_statistics_item)
 
@@ -1426,18 +1426,32 @@ class Ui_MainWindow(object):
         param = [param, None][int(param == (None, None, None))]
         return param
 
-    def track_analysis(self):
+    def show_analysis(self):
         url = self.analysisUrlEdit.text()
         q = link_patterns_extract(url)
         if q is None:
+            print("[Ui_MainWindow show_analysis] Error: link not supported")
+            self.analysisResultTextBrowser.setText("Error: link not supported")
             return
-        track_id = q[2]
-        audio_features = self.api.get_track_audio_features(track_id)
-        del audio_features["type"]
-        del audio_features["track_href"]
-        del audio_features["id"]
-        del audio_features["analysis_url"]
-        s = json.dumps(audio_features, indent='       ').replace('"', '')
+        requested_type = q[1]
+        requested_id = q[2]
+        if requested_type == "track":
+            info = self.api.get_track_audio_features(requested_id)
+            del info["type"]
+            del info["track_href"]
+            del info["id"]
+            del info["analysis_url"]
+        elif requested_type == "artist":
+            info = self.api.get_artist(requested_id)
+            info["followers"] = info["followers"]["total"]
+            del info["external_urls"]
+            del info["href"]
+            del info["images"]
+        else:
+            print("[Ui_MainWindow show_analysis] Error: requested analysis of unsupported type")
+            self.analysisResultTextBrowser.setText("Error: requested analysis of unsupported type")
+            return
+        s = json.dumps(info, indent='       ').replace('"', '')
         self.analysisResultTextBrowser.setText(s)
 
     def show_statistics(self):

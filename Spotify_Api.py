@@ -4,6 +4,8 @@ from base64 import b64encode
 from Configurator import Configurator
 import re
 
+base_url = "https://api.spotify.com/v1"
+
 
 def link_patterns_extract(link):
     link_http = re.search(r"http[s]*://open.spotify.com/(track|artist|genre)/([\dA-Za-z]+)", link)
@@ -105,7 +107,7 @@ class SpotifyApi:
         if len(self.user_id) > 0:
             return 0
 
-        url = "https://api.spotify.com/v1/me"
+        url = base_url + "/me"
         headers = {
             "Authorization": "Bearer " + self.token
         }
@@ -135,7 +137,7 @@ class SpotifyApi:
             print("[SpotifyApi get_playlists_list] Error getting user info")
 
         playlists = []
-        url = f"https://api.spotify.com/v1/users/{self.user_id}/playlists"
+        url = base_url + f"/users/{self.user_id}/playlists"
         params = {"limit": 50}
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, params=params, headers=headers)
@@ -193,7 +195,7 @@ class SpotifyApi:
             print("[SpotifyApi get_recommendations] Error: seeds pool is empty")
             return
 
-        url = "https://api.spotify.com/v1/recommendations"
+        url = base_url + "/recommendations"
         params = {
             "seed_artists": ",".join(seed_artists),
             "seed_tracks": ",".join(seed_tracks),
@@ -322,7 +324,7 @@ class SpotifyApi:
         tracks = list()
 
         limit = 100
-        url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+        url = base_url + f"/playlists/{playlist_id}/tracks"
         headers = {"Authorization": "Bearer " + self.token}
         params = {"offset": offset, "limit": limit, "fields": "total,items(track(uri))"}
         response = requests.get(url, headers=headers, params=params)
@@ -349,7 +351,7 @@ class SpotifyApi:
             print("[SpotifyApi flush_playlist] Error getting playlist items")
             return
         else:
-            url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+            url = base_url + f"/playlists/{playlist_id}/tracks"
             headers = {"Authorization": "Bearer " + self.token}
             data = {"tracks": []}
             errors = []
@@ -390,12 +392,21 @@ class SpotifyApi:
             print("[SpotifyApi add_tracks_to_playlist] Info: list of tracks was empty",
                   "(duplicates filtering was", ["ON)", "OFF)"][int(add_duplicates)])
             return 0
-        url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
-        headers = {"Authorization": "Bearer " + self.token}
-        data = {"uris": new_tracks_filtered}
-        response = requests.post(url, headers=headers, json=data)
         print(len(new_tracks_filtered))
-        if response.status_code == 200 or response.status_code == 201:
+        url = base_url + f"/playlists/{playlist_id}/tracks"
+        headers = {"Authorization": "Bearer " + self.token}
+        data = {"uris": []}
+        for i in range(len(new_tracks_filtered)):
+            if i % 100 == 0 and i != 0:
+                response = requests.post(url, headers=headers, json=data)
+                print("added", len(data["uris"]))
+                if response.status_code != 201:
+                    print("[SpotifyApi add_tracks_to_playlist] Error: " + response.text)
+                data["uris"] = []
+            data["uris"] += [new_tracks_filtered[i]]
+        response = requests.post(url, headers=headers, json=data)
+        print("added", len(data["uris"]))
+        if response.status_code == 201:
             return response.json()
         else:
             print("[SpotifyApi add_tracks_to_playlist] Error: " + response.text)
@@ -418,7 +429,7 @@ class SpotifyApi:
         """
         if not self.prepare_token():
             return
-        url = f"https://api.spotify.com/v1/audio-features/{track_id}"
+        url = base_url + f"/audio-features/{track_id}"
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -444,7 +455,7 @@ class SpotifyApi:
         """
         if not self.prepare_token():
             return
-        url = f"https://api.spotify.com/v1/tracks/{track_id}"
+        url = base_url + f"/tracks/{track_id}"
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -462,7 +473,7 @@ class SpotifyApi:
         """
         if not self.prepare_token():
             return
-        url = f"https://api.spotify.com/v1/artists/{artist_id}"
+        url = base_url + f"/artists/{artist_id}"
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, headers=headers)
         if response.status_code == 200:
@@ -496,7 +507,7 @@ class SpotifyApi:
         else:
             print("[SpotifyApi get_users_top_items] Items time_range not in range (0, 1, 2)")
             return
-        url = f"https://api.spotify.com/v1/me/top/{items_type}"
+        url = base_url + f"/me/top/{items_type}"
         headers = {"Authorization": "Bearer " + self.token}
         response = requests.get(url, headers=headers,
                                 params={"limit": limit, "offset": offset, "time_range": time_range})
@@ -505,6 +516,17 @@ class SpotifyApi:
         else:
             print("[SpotifyApi get_users_top_items] Error:", response.status_code, response.text)
             return
+
+    def get_available_genres(self):
+        if not self.prepare_token():
+            return
+        url = base_url + "/recommendations/available-genre-seeds"
+        headers = {"Authorization": "Bearer " + self.token}
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print("[SpotifyApi get_available_genres] Error:", response.status_code, response.text)
 
 
 if __name__ == "__main__":
